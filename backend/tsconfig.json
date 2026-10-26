@@ -1,0 +1,16 @@
+// Own tsconfig for the backend, needed for "npm run typecheck".
+// Same options as the root tsconfig.json, but limited to src/ and self-contained,
+// because only backend/ is available inside the Docker container.
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

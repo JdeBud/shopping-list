@@ -1,0 +1,52 @@
+name: shopping-list
+
+services:
+
+  backend:
+    container_name: shopping-list-backend
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+    ports:
+      - "${BACKEND_HOST_PORT}:15500"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - PORT=15500
+      - MONGO_URI=mongodb://mongo:27017/shoppingList
+      - CORS_ORIGIN=http://localhost:${FRONTEND_HOST_PORT}
+    init: true
+    command: npm run dev
+    depends_on:
+      - mongo
+
+  frontend:
+    container_name: shopping-list-frontend
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    ports:
+      - "${FRONTEND_HOST_PORT}:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${BACKEND_HOST_PORT}
+    init: true
+    command: npm run dev
+
+  mongo:
+    container_name: shopping-list-mongo
+    build:
+      context: .
+      dockerfile: ./docker/mongo/Dockerfile
+    ports:
+      - "27017:27017"
+    volumes:
+      - shopping-list-data:/data/db
+    restart: always
+
+volumes:
+  shopping-list-data:
